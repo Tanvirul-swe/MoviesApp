@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:restapi/main.dart';
 
 import 'Model/MovieModel.dart';
 import 'Networking/MoviesProvider.dart';
+
+var checkItem;
 
 class MoviesListing extends StatefulWidget {
   @override
@@ -16,9 +19,69 @@ class _MoviesListingState extends State<MoviesListing> {
   List<MovieModel> movies = <MovieModel>[];
 
   //Method to fetch movies from network
-  fetchMovies() async {
+  PopularMoviesFetch() async {
     //Fetching data from sever
-    var data = await MoviesProvider.getJson();
+    var data = await MoviesProvider.PopulerGetJson();
+
+    setState(() {
+      //Holding data from server in generic list results
+      List<dynamic> results = data["results"];
+
+      //Iterating over results list and converting to MovieModel
+      results.forEach((element) {
+        movies.add(MovieModel.fromJson(element));
+      });
+    });
+  }
+
+  TopRateMoviesFetch() async {
+    //Fetching data from sever
+    var data = await MoviesProvider.TopRategetJson();
+
+    setState(() {
+      //Holding data from server in generic list results
+      List<dynamic> results = data["results"];
+
+      //Iterating over results list and converting to MovieModel
+      results.forEach((element) {
+        movies.add(MovieModel.fromJson(element));
+      });
+    });
+  }
+
+  ScienceFictionMoviesFetch() async {
+    //Fetching data from sever
+    var data = await MoviesProvider.ScienceFictiongetJson();
+
+    setState(() {
+      //Holding data from server in generic list results
+      List<dynamic> results = data["results"];
+
+      //Iterating over results list and converting to MovieModel
+      results.forEach((element) {
+        movies.add(MovieModel.fromJson(element));
+      });
+    });
+  }
+
+  ComedyMoviesFetch() async {
+    //Fetching data from sever
+    var data = await MoviesProvider.ComedygetJson();
+
+    setState(() {
+      //Holding data from server in generic list results
+      List<dynamic> results = data["results"];
+
+      //Iterating over results list and converting to MovieModel
+      results.forEach((element) {
+        movies.add(MovieModel.fromJson(element));
+      });
+    });
+  }
+
+  NewmoviesFetch2021() async {
+    //Fetching data from sever
+    var data = await MoviesProvider.Newmovies2021getJson();
 
     setState(() {
       //Holding data from server in generic list results
@@ -35,7 +98,11 @@ class _MoviesListingState extends State<MoviesListing> {
   void initState() {
     //Fetch movies
     defaultChoiceIndex = 0;
-    fetchMovies();
+    PopularMoviesFetch();
+    TopRateMoviesFetch();
+    ScienceFictionMoviesFetch();
+    ComedyMoviesFetch();
+    NewmoviesFetch2021();
     super.initState();
   }
 
@@ -44,11 +111,11 @@ class _MoviesListingState extends State<MoviesListing> {
     'Popular',
     'Top Rate',
     'Science Fiction',
+    'Comedy',
     '2021',
-    '2020'
   ];
-  int? defaultChoiceIndex;
 
+  int? defaultChoiceIndex;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,7 +149,31 @@ class _MoviesListingState extends State<MoviesListing> {
                         selectedColor: Colors.deepPurple,
                         onSelected: (value) {
                           setState(() {
-                            print(_choicesList[index]);
+                            checkItem = _choicesList[index];
+                            print(checkItem);
+                            if (index == 1) {
+                              movies.clear();
+                              PopularMoviesFetch();
+                            } else if (index == 2) {
+                              movies.clear();
+                              TopRateMoviesFetch();
+                            } else if (index == 3) {
+                              movies.clear();
+                              ScienceFictionMoviesFetch();
+                            } else if (index == 4) {
+                              movies.clear();
+                              ComedyMoviesFetch();
+                            } else if (index == 5) {
+                              movies.clear();
+                              NewmoviesFetch2021();
+                            } else if (index == 0) {
+                              movies.clear();
+                              PopularMoviesFetch();
+                              TopRateMoviesFetch();
+                              ScienceFictionMoviesFetch();
+                              ComedyMoviesFetch();
+                              NewmoviesFetch2021();
+                            }
                             defaultChoiceIndex =
                                 value ? index : defaultChoiceIndex;
                           });
@@ -125,7 +216,7 @@ class _MovieTileState extends State<MovieTile> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         print(widget.movies[widget.index].title);
       },
       child: Padding(
@@ -133,7 +224,7 @@ class _MovieTileState extends State<MovieTile> {
         padding: const EdgeInsets.all(8.0),
         //Since information is displayed vertically, Column widget is used
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             widget.movies[widget.index].poster_path != null
                 ? Container(
@@ -169,31 +260,77 @@ class _MovieTileState extends State<MovieTile> {
                       ],
                     ),
                   )
-                : Container(), //Empty container when image is not available
+                : Container(
+                    width: MediaQuery.of(context).size.width / 3,
+                    height: MediaQuery.of(context).size.height / 5,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      //Setting box's color to grey
+                      color: Colors.grey,
+                      image: DecorationImage(
+                        image: AssetImage('ImageAsset/noimage.png'),
+                        fit: BoxFit.fill,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          //grey colored shadow
+                            color: Colors.grey,
+                            //Applying softening effect
+                            blurRadius: 3.0,
+                            //move 1.0 to right (horizontal), and 3.0 to down (vertical)
+                            offset: Offset(1.0, 3.0)),
+                      ],
+                    ),
+                  ), //Empty container when image is not available
 
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    //title text
-                    widget.movies[widget.index].title,
-
-                    //setting fontSize and making it bold
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black),
-                  ),
+            Expanded(
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        //title text
+                        widget.movies[widget.index].title,
+                        overflow: TextOverflow.visible,
+                        softWrap: true,
+                        //setting fontSize and making it bold
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                          'Release date : ${widget.movies[widget.index].release_date.toString()}'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child:
+                          widget.movies[widget.index].original_language == 'en'
+                              ? Text('Language : English')
+                              : Text('Others'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          Text(
+                              '${widget.movies[widget.index].vote_average.toString()}'),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                      'Release date : ${widget.movies[widget.index].release_date.toString()}'),
-                ),
-              ],
+              ),
             ),
 
             // Padding(
