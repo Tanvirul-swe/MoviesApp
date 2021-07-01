@@ -93,16 +93,32 @@ class _MoviesListingState extends State<MoviesListing> {
       });
     });
   }
+  // mainapi() async {
+  //   //Fetching data from sever
+  //   var data = await MoviesProvider.mainGetJson();
+  //
+  //   setState(() {
+  //     //Holding data from server in generic list results
+  //     List<dynamic> results = data[''];
+  //
+  //     //Iterating over results list and converting to MovieModel
+  //     results.forEach((element) {
+  //       movies.add(MovieModel.fromJson(element));
+  //     });
+  //   });
+  // }
+
 
   @override
   void initState() {
     //Fetch movies
     defaultChoiceIndex = 0;
-    PopularMoviesFetch();
-    TopRateMoviesFetch();
-    ScienceFictionMoviesFetch();
-    ComedyMoviesFetch();
-    NewmoviesFetch2021();
+    // mainapi();
+    // PopularMoviesFetch();
+    // TopRateMoviesFetch();
+    // ScienceFictionMoviesFetch();
+    // ComedyMoviesFetch();
+    // NewmoviesFetch2021();
     super.initState();
   }
 
@@ -324,6 +340,7 @@ class _MovieTileState extends State<MovieTile> {
                             color: Colors.amber,
                           ),
                           Text(
+
                               '${widget.movies[widget.index].vote_average.toString()}'),
                         ],
                       ),
@@ -340,7 +357,7 @@ class _MovieTileState extends State<MovieTile> {
             //     widget.movies[widget.index].overview,
             //   ),
             // ),
-            Divider(color: Colors.grey.shade500),
+            Divider(color: Colors.blueAccent),
           ],
         ),
       ),
