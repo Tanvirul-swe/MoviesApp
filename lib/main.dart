@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:restapi/details_of_movies.dart';
 import 'package:restapi/moviesList.dart';
 
 
@@ -15,7 +16,11 @@ class MoviesApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MoviesListing(),
+      initialRoute:  MoviesListing.id,
+      routes: {
+       Details.id:(context)=>Details(),
+        MoviesListing.id:(context)=>MoviesListing(),
+      },
     );
   }
 }

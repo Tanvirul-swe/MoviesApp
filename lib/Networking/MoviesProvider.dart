@@ -49,12 +49,4 @@ class MoviesProvider {
     return json.decode(apiResponse.body);
   }
 
-  static Future<Map> mainGetJson() async {
-    final apiEndPoint =
-        "https://api.themoviedb.org/3/movie/550?api_key=d35cb2cc5a7b666b8ac606fb831c6e66";
-    //URL to fetch movies information
-    final apiResponse = await http.get(Uri.parse(apiEndPoint));
-    //'Instance of Response'
-    return json.decode(apiResponse.body);
-  }
 }

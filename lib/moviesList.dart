@@ -1,15 +1,13 @@
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:restapi/main.dart';
-
+import 'package:restapi/details_of_movies.dart';
 import 'Model/MovieModel.dart';
 import 'Networking/MoviesProvider.dart';
 
 var checkItem;
 
 class MoviesListing extends StatefulWidget {
+  static String id = 'MoviesListing';
   @override
   _MoviesListingState createState() => _MoviesListingState();
 }
@@ -93,32 +91,16 @@ class _MoviesListingState extends State<MoviesListing> {
       });
     });
   }
-  // mainapi() async {
-  //   //Fetching data from sever
-  //   var data = await MoviesProvider.mainGetJson();
-  //
-  //   setState(() {
-  //     //Holding data from server in generic list results
-  //     List<dynamic> results = data[''];
-  //
-  //     //Iterating over results list and converting to MovieModel
-  //     results.forEach((element) {
-  //       movies.add(MovieModel.fromJson(element));
-  //     });
-  //   });
-  // }
-
 
   @override
   void initState() {
     //Fetch movies
     defaultChoiceIndex = 0;
-    // mainapi();
-    // PopularMoviesFetch();
-    // TopRateMoviesFetch();
-    // ScienceFictionMoviesFetch();
-    // ComedyMoviesFetch();
-    // NewmoviesFetch2021();
+    PopularMoviesFetch();
+    TopRateMoviesFetch();
+    ScienceFictionMoviesFetch();
+    ComedyMoviesFetch();
+    NewmoviesFetch2021();
     super.initState();
   }
 
@@ -234,131 +216,167 @@ class _MovieTileState extends State<MovieTile> {
     return InkWell(
       onTap: () {
         print(widget.movies[widget.index].title);
+        print(widget.movies[widget.index].overview);
+        print(widget.movies[widget.index].popularity);
+        print(widget.movies[widget.index].vote_average);
+        print(widget.movies[widget.index].vote_count);
+        Navigator.pushNamed(context,Details.id);
+
       },
       child: Padding(
-        //padding around the entry
         padding: const EdgeInsets.all(8.0),
-        //Since information is displayed vertically, Column widget is used
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            widget.movies[widget.index].poster_path != null
-                ? Container(
-                    //Making image's width to half of the given screen size
-                    width: MediaQuery.of(context).size.width / 3,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [Color(0xFFCF7BD2),Colors.blue.shade100, ],
+                begin: const FractionalOffset(0.0, 1.0),
+                end: const FractionalOffset(1.0, 2.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp
+            ),
+            boxShadow: [
+              BoxShadow(
+                //grey colored shadow
+                  color: Colors.grey,
+                  //Applying softening effect
+                  blurRadius: 3.0,
+                  //move 1.0 to right (horizontal), and 3.0 to down (vertical)
+                  offset: Offset(1.0, 3.0)),
+            ],
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              widget.movies[widget.index].poster_path != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 20.0, right: 10.0),
+                      child: Container(
+                        //Making image's width to half of the given screen size
+                        width: MediaQuery.of(context).size.width / 5,
 
-                    //Making image's height to one fourth of the given screen size
-                    height: MediaQuery.of(context).size.height / 5,
+                        //Making image's height to one fourth of the given screen size
+                        height: MediaQuery.of(context).size.height / 7,
 
-                    //Making image box visually appealing by dropping shadow
-                    decoration: BoxDecoration(
-                      //Making image box slightly curved
-                      borderRadius: BorderRadius.circular(10.0),
-                      //Setting box's color to grey
-                      color: Colors.grey,
-
-                      //Decorating image
-                      image: DecorationImage(
-                          image: NetworkImage(MoviesProvider.imagePathPrefix +
-                              widget.movies[widget.index].poster_path),
-                          //Image getting all the available space
-                          fit: BoxFit.cover),
-
-                      //Dropping shadow
-                      boxShadow: [
-                        BoxShadow(
-                            //grey colored shadow
-                            color: Colors.grey,
-                            //Applying softening effect
-                            blurRadius: 3.0,
-                            //move 1.0 to right (horizontal), and 3.0 to down (vertical)
-                            offset: Offset(1.0, 3.0)),
-                      ],
-                    ),
-                  )
-                : Container(
-                    width: MediaQuery.of(context).size.width / 3,
-                    height: MediaQuery.of(context).size.height / 5,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      //Setting box's color to grey
-                      color: Colors.grey,
-                      image: DecorationImage(
-                        image: AssetImage('ImageAsset/noimage.png'),
-                        fit: BoxFit.fill,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          //grey colored shadow
-                            color: Colors.grey,
-                            //Applying softening effect
-                            blurRadius: 3.0,
-                            //move 1.0 to right (horizontal), and 3.0 to down (vertical)
-                            offset: Offset(1.0, 3.0)),
-                      ],
-                    ),
-                  ), //Empty container when image is not available
-
-            Expanded(
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        //title text
-                        widget.movies[widget.index].title,
-                        overflow: TextOverflow.visible,
-                        softWrap: true,
-                        //setting fontSize and making it bold
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                          'Release date : ${widget.movies[widget.index].release_date.toString()}'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child:
-                          widget.movies[widget.index].original_language == 'en'
-                              ? Text('Language : English')
-                              : Text('Others'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.star,
-                            color: Colors.amber,
+                        //Making image box visually appealing by dropping shadow
+                        decoration: BoxDecoration(
+                          //Making image box slightly curved
+                          borderRadius: BorderRadius.circular(10.0),
+                          //Setting box's color to grey
+                          color: Colors.grey,
+                          //Decorating image
+                          image: DecorationImage(
+                            image: NetworkImage(MoviesProvider.imagePathPrefix +
+                                widget.movies[widget.index].poster_path),
+                            //Image getting all the available space
+                            fit: BoxFit.cover,
                           ),
-                          Text(
 
-                              '${widget.movies[widget.index].vote_average.toString()}'),
-                        ],
+                          //Dropping shadow
+                          boxShadow: [
+                            BoxShadow(
+                                //grey colored shadow
+                                color: Colors.grey,
+                                //Applying softening effect
+                                blurRadius: 3.0,
+                                //move 1.0 to right (horizontal), and 3.0 to down (vertical)
+                                offset: Offset(1.0, 3.0)),
+                          ],
+                        ),
                       ),
                     )
-                  ],
+                  : Container(
+                      width: MediaQuery.of(context).size.width / 3,
+                      height: MediaQuery.of(context).size.height / 5,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        //Setting box's color to grey
+                        color: Colors.grey,
+                        image: DecorationImage(
+                          image: AssetImage('ImageAsset/noimage.png'),
+                          fit: BoxFit.fill,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                              //grey colored shadow
+                              color: Colors.grey,
+                              //Applying softening effect
+                              blurRadius: 3.0,
+                              //move 1.0 to right (horizontal), and 3.0 to down (vertical)
+                              offset: Offset(1.0, 3.0)),
+                        ],
+                      ),
+                    ), //Empty container when image is not available
+
+              Expanded(
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15.0, left: 10.0),
+                        child: Text(
+                          //title text
+                          widget.movies[widget.index].title,
+                          overflow: TextOverflow.visible,
+                          softWrap: true,
+                          //setting fontSize and making it bold
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white),
+
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, top: 5.0),
+                        child: Text(
+                            'Release date : ${widget.movies[widget.index].release_date.toString()}',style: TextStyle(
+                          color: Colors.white,
+                        ),),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, top: 5.0),
+                        child: widget.movies[widget.index].original_language ==
+                                'en'
+                            ? Text('Language : English',style: TextStyle(
+                          color: Colors.white,
+                        ),)
+                            : Text('Others'),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, top: 5.0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                            Text(
+                                '${widget.movies[widget.index].vote_average.toString()}',style: TextStyle(
+                              color: Colors.white,
+                            ),),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            // Padding(
-            //   padding: const EdgeInsets.all(8.0),
-            //   //Movie descripton text
-            //   child: Text(
-            //     widget.movies[widget.index].overview,
-            //   ),
-            // ),
-            Divider(color: Colors.blueAccent),
-          ],
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   //Movie descripton text
+              //   child: Text(
+              //     widget.movies[widget.index].overview,
+              //   ),
+              // ),
+              Divider(
+                color: Colors.blueAccent,
+              ),
+            ],
+          ),
         ),
       ),
     );
