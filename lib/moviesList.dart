@@ -215,12 +215,13 @@ class _MovieTileState extends State<MovieTile> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        print(widget.movies[widget.index].title);
-        print(widget.movies[widget.index].overview);
-        print(widget.movies[widget.index].popularity);
-        print(widget.movies[widget.index].vote_average);
-        print(widget.movies[widget.index].vote_count);
-        Navigator.pushNamed(context,Details.id);
+       String title =  widget.movies[widget.index].title;
+        String overview = widget.movies[widget.index].overview;
+        num rating =  widget.movies[widget.index].vote_average;
+        int vot_count = widget.movies[widget.index].vote_count;
+        String? releseDate = widget.movies[widget.index].release_date;
+        String poster_path = widget.movies[widget.index].poster_path;
+        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Details(title,overview,releseDate!,rating,vot_count,poster_path)));
 
       },
       child: Padding(

@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:restapi/Networking/MoviesProvider.dart';
 
 class Details extends StatefulWidget {
-  const Details({Key? key}) : super(key: key);
   static String id = 'Details';
+  final String title;
+  final String overview;
+  final String releseDate;
+  final num rating;
+  final int votecount;
+  final String poster_path;
+
+  Details(this.title, this.overview, this.releseDate, this.rating,
+      this.votecount, this.poster_path);
 
   @override
   _DetailsState createState() => _DetailsState();
@@ -31,7 +39,7 @@ class _DetailsState extends State<Details> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'The game of thoren',
+                    widget.title,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -52,10 +60,10 @@ class _DetailsState extends State<Details> {
                       color: Colors.grey,
                       //Decorating image
                       image: DecorationImage(
-                        image: NetworkImage(
-                            "https://images.daznservices.com/di/library/GOAL/2/7f/sadio-mane-liverpool-2020-21_15v2z5xcvrs9p1by2ebt86jo9h.jpg?quality=60&w=1000"),
+                        image: NetworkImage(MoviesProvider.imagePathPrefix +
+                            widget.poster_path),
                         //Image getting all the available space
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                       ),
 
                       //Dropping shadow
@@ -90,7 +98,7 @@ class _DetailsState extends State<Details> {
                       height: 10.0,
                     ),
                     Text(
-                      'Overviffffffffffffffffffffffffffffffffffffffffffffffffgfffdfsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafffffffffffffffffffffffffffffffffffffffffffffffffffffffffffddddddddddddddddddddffffffew',
+                      widget.overview,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 15.0,
@@ -106,7 +114,7 @@ class _DetailsState extends State<Details> {
                         borderRadius: BorderRadius.circular(20.0),
                         boxShadow: [
                           BoxShadow(
-                            //grey colored shadow
+                              //grey colored shadow
                               color: Colors.red,
                               //Applying softening effect
                               blurRadius: 20.0,
@@ -131,7 +139,7 @@ class _DetailsState extends State<Details> {
                                 height: 10.0,
                               ),
                               Text(
-                                '10.0',
+                                widget.rating.toString(),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,
@@ -143,7 +151,7 @@ class _DetailsState extends State<Details> {
                           Column(
                             children: [
                               Text(
-                                'Popularity',
+                                'Vote Count',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 17.0,
@@ -153,30 +161,9 @@ class _DetailsState extends State<Details> {
                                 height: 10.0,
                               ),
                               Text(
-                                '10.0',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Text(
-                                'VoteCount',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 17.0,
-
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10.0,
-                              ),
-                              Text(
-                                '10.0',
+                                '${widget.votecount}' != null
+                                    ? '${widget.votecount}'
+                                    : 'Empty',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,
@@ -198,7 +185,7 @@ class _DetailsState extends State<Details> {
                                 height: 10.0,
                               ),
                               Text(
-                                '10.0',
+                                widget.releseDate,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,

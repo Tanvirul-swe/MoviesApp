@@ -18,7 +18,6 @@ class MoviesApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute:  MoviesListing.id,
       routes: {
-       Details.id:(context)=>Details(),
         MoviesListing.id:(context)=>MoviesListing(),
       },
     );
