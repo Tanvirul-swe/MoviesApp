@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:restapi/details_of_movies.dart';
+import 'package:shimmer/shimmer.dart';
 import 'Model/MovieModel.dart';
 import 'Networking/MoviesProvider.dart';
+import 'bal.dart';
 
 var checkItem;
-
+bool _bool = true;
 class MoviesListing extends StatefulWidget {
   static String id = 'MoviesListing';
   @override
@@ -15,6 +17,8 @@ class MoviesListing extends StatefulWidget {
 class _MoviesListingState extends State<MoviesListing> {
   //Variable to hold movies information
   List<MovieModel> movies = <MovieModel>[];
+  bool isLoading = false;
+
 
   //Method to fetch movies from network
   PopularMoviesFetch() async {
@@ -93,15 +97,32 @@ class _MoviesListingState extends State<MoviesListing> {
   }
 
   @override
-  void initState() {
+    initState()  {
     //Fetch movies
+    // defaultChoiceIndex = 0;
+    // PopularMoviesFetch();
+    // TopRateMoviesFetch();
+    // ScienceFictionMoviesFetch();
+    // ComedyMoviesFetch();
+    // NewmoviesFetch2021();
+    // _bool = false;
+    super.initState();
+    loadData();
+  }
+  Future loadData() async {
+    setState(() {
+      isLoading = true;
+    });
+    await Future.delayed(Duration(seconds: 2));
     defaultChoiceIndex = 0;
     PopularMoviesFetch();
     TopRateMoviesFetch();
     ScienceFictionMoviesFetch();
     ComedyMoviesFetch();
     NewmoviesFetch2021();
-    super.initState();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   List<String> _choicesList = [
@@ -116,6 +137,7 @@ class _MoviesListingState extends State<MoviesListing> {
   int? defaultChoiceIndex;
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Movie Rank'),
@@ -189,9 +211,15 @@ class _MoviesListingState extends State<MoviesListing> {
           Expanded(
             child: Container(
                 child: ListView.builder(
-                    itemCount: movies == null ? 0 : movies.length,
+                    itemCount: isLoading? 5  : movies.length,
                     itemBuilder: (context, index) {
-                      return MovieTile(movies, index);
+                      if(isLoading){
+                        return buildMovieShimmer();
+                      }
+                      else{
+                        return MovieTile(movies, index);
+                      }
+
                     })),
           ),
         ],
@@ -199,6 +227,16 @@ class _MoviesListingState extends State<MoviesListing> {
     );
   }
 }
+Widget buildMovieShimmer() =>
+    ListTile(
+      leading: CustomWidget.circular(height: 64, width: 64),
+      title: Align(
+        alignment: Alignment.centerLeft,
+        child: CustomWidget.rectangular(height: 16,
+            width: 100),
+      ),
+      subtitle: CustomWidget.rectangular(height: 14),
+    );
 
 class MovieTile extends StatefulWidget {
   final List<MovieModel> movies;
